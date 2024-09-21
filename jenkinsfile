@@ -1,0 +1,14 @@
+pipeline
+{
+	agent any
+	stages
+	{
+		stage('scm checkout")
+		{step{ git 'https://github.com/shubhu34/mavenproject.git' }}
+
+		stage('validate the job')
+		{step{ withMaven(globalMavenSettingsConfig: '', jdk: 'JDK_HOME', maven: 'maven_home', mavenSettingsConfig: '', traceability: true) {
+    sh 'mvn validate'
+}}	}
+	}
+}
