@@ -9,6 +9,12 @@ pipeline
 		stage('compile the job')
 		{steps{ withMaven(globalMavenSettingsConfig: '', jdk: 'JDK_HOME', maven: 'maven_home', mavenSettingsConfig: '', traceability: true) {
     sh 'mvn compile'
-}}	}
+ 		}}	}
+
+		stage('excute unite test framework')
+		{steps{ withMaven(globalMavenSettingsConfig: '', jdk: 'JDK_HOME', maven: 'maven_home', mavenSettingsConfig: '', traceability: true) {
+    sh 'mvn test'
+ 		}}	}
+
 	}
 }
