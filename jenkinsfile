@@ -20,5 +20,15 @@ pipeline
 		{steps{ withMaven(globalMavenSettingsConfig: '', jdk: 'JDK_HOME', maven: 'maven_home', mavenSettingsConfig: '', traceability: true) {
     			 sh 'mvn clean -B -DskipTests package'
  		}}	}
+
+		stage('deploy the tomcat')
+		{	steps
+			{
+				sshagent(['DEVCICD']) 	{
+    			sh 'scp -o StrictHostKeyChecking=no webapp/target/webapp.war ec2-user@172.31.27.71:/usr/share/tomcat/webapps'
+					}	
+			}
+		}
+
 	}
 }
