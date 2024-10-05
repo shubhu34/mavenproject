@@ -1,0 +1,31 @@
+pipeline
+{
+	agent any
+	stages
+	{
+		stage('scm checkout')
+		{steps{ git 'https://github.com/shubhu34/mavenproject.git' }}
+
+		stage('compile the job')
+		{steps{ withMaven(globalMavenSettingsConfig: '', jdk: 'JDK_HOME', maven: 'maven_home', mavenSettingsConfig: '', traceability: true) {
+    			sh 'mvn compile'
+ 		}}	}
+
+		stage('excute unite test framework')
+		{steps{ withMaven(globalMavenSettingsConfig: '', jdk: 'JDK_HOME', maven: 'maven_home', mavenSettingsConfig: '', traceability: true) {
+    			 sh 'mvn test'
+ 		}}	}
+
+		stage('build the code')
+		{steps{ withMaven(globalMavenSettingsConfig: '', jdk: 'JDK_HOME', maven: 'maven_home', mavenSettingsConfig: '', traceability: true) 
+        {
+            withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonar') 
+            {
+    			 sh 'mvn clean -B -DskipTests sonar:sonar package'
+            }        
+ 		}}	}
+
+		
+
+	}
+}
