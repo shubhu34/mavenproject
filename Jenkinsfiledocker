@@ -27,14 +27,26 @@ pipeline
 				sh 'docker build -t 021891603856.dkr.ecr.ap-southeast-1.amazonaws.com/devops/july:latest .'
 			}
 		}
-        stage('push docker image to AWS ECR')
-        {steps { 
-            withDockerRegistry(credentialsId: 'ecr:ap-southeast-1:awscicd', url: 'https://021891603856.dkr.ecr.ap-southeast-1.amazonaws.com/devops/july') 
-                    {
-                        sh 'docker push 021891603856.dkr.ecr.ap-southeast-1.amazonaws.com/devops/july:latest'
-                    }
-                }
-        }
+        	stage('push docker image to AWS ECR')
+        	{
+			steps { 
+            			withDockerRegistry(credentialsId: 'ecr:ap-southeast-1:awscicd', url: 'https://021891603856.dkr.ecr.ap-southeast-1.amazonaws.com/devops/july') 
+                    		{
+                        		sh 'docker push 021891603856.dkr.ecr.ap-southeast-1.amazonaws.com/devops/july:latest'
+                    		}
+                	}
+        	}
+
+		stage ('deploy to EKS kubernetes cluster')
+		{
+			steps { withAWS(credentials: 'awscicd', endpointUrl: '172.31.13.232:443', region: 'ap-southeast-1')
+			{
+				sh 'aws eks --region ap-southeast-1 update-kubeconfig --name my-eks'
+				sh 'kubectl apply -f myapp-kubernetes.yaml'
+
+				// sh 'helm install ./<chartname> '
+			} }
+		}
 
 	}
 }
